@@ -1,8 +1,8 @@
 ## Interface: 30300
 ## Title: ZebraKarmaFrames
 ## Notes: Pops up frames to declare bonus and nobonus easier
-## Author: Beh
-## Version: 0.1
+## Author: Beh of Bloodfeather EU
+## Version: 0.2
 ## X-Category: Loot & Communication
 ## X-Date: 7th of December 2009
 
