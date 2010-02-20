@@ -1,0 +1,12 @@
+## Interface: 30300
+## Title: ZebraKarmaFrames
+## Notes: Pops up frames to declare bonus and nobonus easier
+## Author: Beh
+## Version: 0.1
+## X-Category: Loot & Communication
+## X-Date: 7th of December 2009
+
+embeds.xml
+Locale-enGB.lua
+ZebraKarmaFrames.lua
+ZebraKarmaFrames.xml
