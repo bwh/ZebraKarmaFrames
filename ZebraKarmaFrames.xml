@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Frame name="ZKFFormTemplate" movable="true" enableMouse="true" virtual="true">
     <Size>
-      <AbsDimension x="60" y="300" />
+      <AbsDimension x="100" y="300" />
     </Size>
     <Anchors>
       <Anchor point="CENTER" relativeTo="UIParent">
@@ -20,26 +20,22 @@
       </EdgeSize>
     </Backdrop>
     <Frames>
-	  <Button name="$icon" text="$parentButton2">
+	  <Button name="$parentIcon" text="">
         <Size>
-          <AbsDimension x="32" y="32" />
+          <AbsDimension x="50" y="50" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="9" y="-32" />
+              <AbsDimension x="25" y="-25" />
             </Offset>
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnEnter>myIconEnter()</OnEnter>
-          <OnLeave>myIconLeave()</OnLeave>
-          <OnClick>myIconClick()</OnClick>
+          <OnEnter>myIconEnter(self)</OnEnter>
+          <OnLeave>myIconLeave(self)</OnLeave>
+--          <OnClick>myIconClick(self)</OnClick>
         </Scripts>
-        <NormalTexture file="Interface\Icons\Ability_Druid_Berserk"/>
-        <PushedTexture file="Interface\Icons\Ability_Druid_Berserk"/>
-        <DisabledTexture file="Interface\Icons\Ability_Druid_Berserk"/>
-        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD"/>
         <ButtonText name="$parentText">
           <FontHeight>
             <AbsValue val="10" />
@@ -49,29 +45,45 @@
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
       </Button>
-      <Button name="$parentButton1" text="Bonus">
+	  <Button name="$parentRoll" text="">
         <Size>
-          <AbsDimension x="60" y="20" />
+          <AbsDimension x="50" y="50" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="20" y="-180" />
+              <AbsDimension x="25" y="-125" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick>ZebraKarmaFrames:ZKFRoll(self)</OnClick>
+        </Scripts>
+        <ButtonText name="$parentText">
+          <FontHeight>
+            <AbsValue val="10" />
+          </FontHeight>
+        </ButtonText>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+        <NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up"/>
+        <DisabledTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up"/>
+      </Button>
+      <Button name="$parentbtnBonus" text="Bonus">
+        <Size>
+          <AbsDimension x="80" y="20" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="10" y="-200" />
             </Offset>
           </Anchor>
         </Anchors>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+                  <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </NormalTexture>
-        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </PushedTexture>
-        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </DisabledTexture>
-        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </HighlightTexture>
         <ButtonText name="$parentText">
           <FontHeight>
             <AbsValue val="8" />
@@ -81,32 +93,23 @@
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
         <Scripts>
-        	<OnClick>myBonusClick()</OnClick>
+        	<OnClick>myBonusClick(self)</OnClick>
         </Scripts>
       </Button>
-      <Button name="$parentComponent1" text="No Bonus">
+      <Button name="$parentbtnNoBonus" text="No Bonus">
         <Size>
-          <AbsDimension x="60" y="20" />
+          <AbsDimension x="80" y="20" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="20" y="-200" />
+              <AbsDimension x="10" y="-220" />
             </Offset>
           </Anchor>
         </Anchors>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+                  <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </NormalTexture>
-        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </PushedTexture>
-        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </DisabledTexture>
-        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </HighlightTexture>
         <ButtonText name="$parentText">
           <FontHeight>
             <AbsValue val="8" />
@@ -116,32 +119,23 @@
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
         <Scripts>
-        	<OnClick>myNoBonusClick()</OnClick>
+        	<OnClick>myNoBonusClick(self)</OnClick>
         </Scripts>
       </Button>
-      <Button name="$parentComponent2" text="Off Spec">
+      <Button name="$parentbtnOffSpec" text="Off Spec">
         <Size>
-          <AbsDimension x="60" y="20" />
+          <AbsDimension x="80" y="20" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="20" y="-220" />
+              <AbsDimension x="10" y="-240" />
             </Offset>
           </Anchor>
         </Anchors>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+                  <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </NormalTexture>
-        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </PushedTexture>
-        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </DisabledTexture>
-        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </HighlightTexture>
         <ButtonText name="$parentText">
           <FontHeight>
             <AbsValue val="8" />
@@ -151,32 +145,23 @@
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
         <Scripts>
-        	<OnClick>myOffSpecClick()</OnClick>
+        	<OnClick>myOffSpecClick(self)</OnClick>
         </Scripts>
       </Button>
-      <Button name="$parentComponent3" text="Pass">
+      <Button name="$parentbtnPass" text="Pass">
         <Size>
-          <AbsDimension x="60" y="20" />
+          <AbsDimension x="80" y="20" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="20" y="-240" />
+              <AbsDimension x="10" y="-260" />
             </Offset>
           </Anchor>
         </Anchors>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+                  <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </NormalTexture>
-        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </PushedTexture>
-        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </DisabledTexture>
-        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </HighlightTexture>
         <ButtonText name="$parentText">
           <FontHeight>
             <AbsValue val="8" />
@@ -186,9 +171,41 @@
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
         <Scripts>
-        	<OnClick>myPassClick()</OnClick>
+        	<OnClick>myPassClick(self)</OnClick>
         </Scripts>
       </Button>
+      <Frame name="$parentLabel">
+        <Size>
+          <AbsDimension x="90" y="60" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="5" y="-65" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="$parentText" font="Fonts\FRIZQT__.TTF" text="">
+              <Anchors>
+                <Anchor point="TOPLEFT" />
+                <Anchor point="BOTTOMRIGHT" />
+              </Anchors>
+              <FontHeight>
+                <AbsValue val="12" />
+              </FontHeight>
+              <Color r="1" g="0.8196079" b="0" />
+              <Shadow>
+                <Color r="0" g="0" b="0" />
+                <Offset>
+                  <AbsDimension x="1" y="-1" />
+                </Offset>
+              </Shadow>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
     </Frames>
   </Frame>
 </Ui>

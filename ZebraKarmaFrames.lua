@@ -13,15 +13,40 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 function addon:OnInitialize()
 	self:RegisterComm(self.CommPrefix)
-	count = 5
-	for i = 1, count do
-		local zkf = CreateFrame("Frame","myzkfframe"..i, nil , "ZKFFormTemplate")
-		zkf:SetFrameStrata("BACKGROUND")
-		zkf:SetPoint("CENTER",0,0)
-		zkf:Show()
-	end 
+
+	
 end
 
+function addon:Callme(parx,pary)
+	addon:CreateLootFrame(parx,pary)
+end 
+
+function addon:CreateLootFrame(fIndex,itemID)
+	local zkf = getglobal("ZebraKarmaFramesLootFrame"..fIndex)
+
+	if not zkf then
+		zkf = CreateFrame("Frame","ZebraKarmaFramesLootFrame"..fIndex, UIParent , "ZKFFormTemplate")
+	end
+	itemName, itemLink, _, _, _, _, _, _,_, itemTexture = GetItemInfo(itemID) 
+	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Icon"):SetNormalTexture(itemTexture)
+	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Icon"):SetText(itemID)
+	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."IconText"):Hide()
+	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."LabelText"):SetText(itemName)
+	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Roll"):Enable()
+	zkf:ClearAllPoints()
+	zkf:SetParent(UIParent)
+	local leftOffset = fIndex * (zkf:GetWidth() + 20)
+	local topOffset = 0
+
+	if leftOffset > GetScreenWidth()  then
+		leftOffset = 0 
+		topOffset = 120
+	end
+	zkf:SetPoint("LEFT", UIParent, "LEFT", leftOffset, topOffset )
+--	zkf:SetPoint("TOP",  )	
+	zkf:SetFrameStrata("BACKGROUND")
+	zkf:Show()
+end
 
 
 function addon:SendComm(distribution, target, ...)
@@ -52,33 +77,37 @@ end
 
 
 
-function IconEnter(icon,itemid)
+function myIconEnter(self)
+itemid = self:GetText()
+print(itemid)
 local itemName  = GetItemInfo(itemid)
-icon:SetImage("Interface\\Icons\\"..GetItemIcon(itemid))
-GameTooltip:SetOwner(icon.frame, "ANCHOR_PRESERVE")
+self:SetNormalTexture("Interface\\Icons\\"..GetItemIcon(itemid))
+GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
 GameTooltip:SetHyperlink("item:"..itemid..":0:0:0:0:0:0:0")
+GameTooltip:Show()
 end
 
 
-function IconLeave(icon)
-icon:SetImage("Interface\\Icons\\spell_frost_wizardmark")
+function myIconLeave(self)
 GameTooltip:Hide()
 end
 
 
 
-function btnClick(button)
+function btnClick(self)
 --debug
 --print (button.text:GetText())
-addon:SendComm("WHISPER", "Bahadur", "BTNCLICK", button.text:GetText()) 
+addon:SendComm("WHISPER", "Rudahab", "BTNCLICK", self.text:GetText()) 
 end
 
 function addon:OnBTNCLICK(sender,msg)
 print(sender..msg)
 end 
 
-function CanUse()
+function addon:CanUse(itemlink)
 
+	GameTooltip:Show()
+	GameTooltip:SetHyperlink(itemlink)
 	local l = { "TextLeft", "TextRight" }
 	
 	for i = 2, GameTooltip:NumLines() do
@@ -88,27 +117,19 @@ function CanUse()
 				local txt = obj:GetText()
 				local r, g, b = obj:GetTextColor()
 				local c = string.format( "%02x%02x%02x", r * 255, g * 255, b * 255 )
+				print(c)
 				if c == "fe1f1f" then
-					--ArkInventory.Output( { "line[", i, "]=[", txt, "]" } )
 					if txt ~= ITEM_DISENCHANT_NOT_DISENCHANTABLE then
+						GameTooltip:Hide()
 						return false
 					end
 				end
 			end
 		end
 	end
-
+	GameTooltip:Hide()
 	return true
-	
-end
 
-
-function myIconEnter()
-	print("iconenter")
-end
-
-function myIconLeave()
-	print("iconleave")
 end
 
 function myIconClick()
@@ -116,42 +137,43 @@ function myIconClick()
 end
 
 
-function myPassClick()
-	print("pass")
+function myPassClick(obj)
+	obj:GetParent():Hide()
 end
 
 
-function myOffSpecClick()
+function myOffSpecClick(self)
+	addon:SendComm("WHISPER", "Rudahab", "BTNCLICK", self:GetText()) 
 	print("offspec")
 end
 
 
-function myBonusClick()
+function myBonusClick(self)
+	addon:SendComm("WHISPER", "Rudahab", "BTNCLICK", self:GetText()) 
 	print("bonus")
 end
 
 
-function myNoBonusClick()
+function myNoBonusClick(self)
+	addon:SendComm("WHISPER", "Rudahab", "BTNCLICK", self:GetText()) 
 	print("nobonus")
 end
 
+function addon:ZKFRoll(self)
+--local highlight = CreateFrame("Frame", "ShuckItHightlight", UIParent)
+--highlight:SetFrameStrata("TOOLTIP")
+--highlight:SetAlpha(1)
+--highlight:Hide()
 
-function GroupLootFrame_OnShow(self)
-	local texture, name, count, quality, bindOnPickUp = GetLootRollItemInfo(self.rollID);
-	
-	if ( bindOnPickUp ) then
-		self:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border", tile = true, tileSize = 32, edgeSize = 32, insets = { left = 11, right = 12, top = 12, bottom = 11 } } );
-		getglobal(self:GetName().."Corner"):SetTexture("Interface\\DialogFrame\\UI-DialogBox-Gold-Corner");
-		getglobal(self:GetName().."Decoration"):Show();
-	else 
-		self:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32, insets = { left = 11, right = 12, top = 12, bottom = 11 } } );
-		getglobal(self:GetName().."Corner"):SetTexture("Interface\\DialogFrame\\UI-DialogBox-Corner");
-		getglobal(self:GetName().."Decoration"):Hide();
-	end
-	
-	local id = self:GetID();
-	getglobal("GroupLootFrame"..id.."IconFrameIcon"):SetTexture(texture);
-	getglobal("GroupLootFrame"..id.."Name"):SetText(name);
-	local color = ITEM_QUALITY_COLORS[quality];
-	getglobal("GroupLootFrame"..id.."Name"):SetVertexColor(color.r, color.g, color.b);
+--highlight._texture = highlight:CreateTexture(nil, "OVERLAY")
+--highlight._texture:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
+--highlight._texture:SetBlendMode("ADD")
+--highlight._texture:SetAllPoints(highlight)
+
+--      highlight:SetParent(self)
+--      highlight:SetAllPoints(self)
+--      highlight:Show()
+
+	RandomRoll(1,100)
+	self:Disable()
 end
