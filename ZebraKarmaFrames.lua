@@ -1,5 +1,5 @@
 local ADDONNAME = "ZebraKarmaFrames"
-ZebraKarmaFrames = LibStub("AceAddon-3.0"):NewAddon(ADDONNAME, "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0","AceComm-3.0")
+ZebraKarmaFrames = LibStub("AceAddon-3.0"):NewAddon(ADDONNAME, "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0","AceComm-3.0", "AceTimer-3.0")
 local S = LibStub("AceSerializer-3.0")
 local addon = ZebraKarmaFrames
 addon.ADDONNAME = ADDONNAME
@@ -14,8 +14,20 @@ local AceGUI = LibStub("AceGUI-3.0")
 function addon:OnInitialize()
 	self:RegisterComm(self.CommPrefix)
 
-	
+
+
 end
+
+
+function addon:TimerFeedback()
+  ZebraKarmaFrames:Callme(1,6948)
+  self.timerCount = self.timerCount + 1
+
+  if self.timerCount == 50 then
+    self:CancelAllTimers()
+  end
+end
+
 
 function addon:Callme(parx,pary)
 	addon:CreateLootFrame(parx,pary)
@@ -32,7 +44,9 @@ function addon:CreateLootFrame(fIndex,itemID)
 	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Icon"):SetText(itemID)
 	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."IconText"):Hide()
 	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."LabelText"):SetText(itemName)
-	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Roll"):Enable()
+	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Roll"):Disable()
+--	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Roll"):SetNormalTexture("")
+	getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Roll"):SetDisabledTexture("")
 	zkf:ClearAllPoints()
 	zkf:SetParent(UIParent)
 	local leftOffset = fIndex * (zkf:GetWidth() + 20)
@@ -97,12 +111,29 @@ end
 function btnClick(self)
 --debug
 --print (button.text:GetText())
-addon:SendComm("WHISPER", "Rudahab", "BTNCLICK", self.text:GetText()) 
+addon:SendComm("WHISPER",  UnitName("player"), "BTNCLICK", self.text:GetText()) 
 end
 
 function addon:OnBTNCLICK(sender,msg)
 print(sender..msg)
 end 
+
+
+function addon:OnBROADCAST(sender,msg,...)
+	fIndex = select(1,...)
+	ZebraKarmaFrames:Callme(msg, fIndex)
+	self.timer..fIndex = self:ScheduleRepeatingTimer("ZKF"..fIndex,0.2)
+	print(sender..msg..select(1,...))
+end 
+
+function addon:OnITEMROLLSTART(sender,msg)
+	getglobal("ZebraKarmaFramesLootFrame"..msg.."Roll"):SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+	getglobal("ZebraKarmaFramesLootFrame"..msg.."Roll"):Enable()	
+end
+
+function addon:OnWINNERANNOUNCE(sender,msg)
+	getglobal("ZebraKarmaFramesLootFrame"..msg):Hide()		
+end
 
 function addon:CanUse(itemlink)
 
@@ -160,20 +191,8 @@ function myNoBonusClick(self)
 end
 
 function addon:ZKFRoll(self)
---local highlight = CreateFrame("Frame", "ShuckItHightlight", UIParent)
---highlight:SetFrameStrata("TOOLTIP")
---highlight:SetAlpha(1)
---highlight:Hide()
-
---highlight._texture = highlight:CreateTexture(nil, "OVERLAY")
---highlight._texture:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
---highlight._texture:SetBlendMode("ADD")
---highlight._texture:SetAllPoints(highlight)
-
---      highlight:SetParent(self)
---      highlight:SetAllPoints(self)
---      highlight:Show()
-
 	RandomRoll(1,100)
+	self:SetNormalTexture("")
+	self:SetDisabledTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
 	self:Disable()
 end

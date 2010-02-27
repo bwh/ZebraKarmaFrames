@@ -67,8 +67,6 @@
         <NormalFont style="GameFontNormal" />
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
-        <NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up"/>
-        <DisabledTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up"/>
       </Button>
       <Button name="$parentbtnBonus" text="Bonus">
         <Size>
