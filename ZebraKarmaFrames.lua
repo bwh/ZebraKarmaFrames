@@ -122,7 +122,7 @@ end
 function addon:OnBROADCAST(sender,msg,...)
 	fIndex = select(1,...)
 	ZebraKarmaFrames:Callme(msg, fIndex)
-	self.timer..fIndex = self:ScheduleRepeatingTimer("ZKF"..fIndex,0.2)
+--		self.timer..fIndex = self:ScheduleRepeatingTimer("ZKF"..fIndex,0.2)
 	print(sender..msg..select(1,...))
 end 
 
@@ -174,19 +174,48 @@ end
 
 
 function myOffSpecClick(self)
-	addon:SendComm("WHISPER", "Rudahab", "BTNCLICK", self:GetText()) 
+	self.glow = self:CreateTexture(nil,"OVERLAY")
+	self.glow:SetTexture("Interface\\Buttons\\UI-Panel-Button-Glow")
+	self.glow:SetAlpha(1)
+	self.glow:SetBlendMode("ADD")	
+	self.glow:SetTexCoord(0,0.7,0,0.5)
+	self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", -5, 5)
+	self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 0, 0)
+	
+
+	addon:SendComm("WHISPER", UnitName("player"), "BTNCLICK", self:GetText()) 
 	print("offspec")
+	self:Disable()
+	
 end
 
 
 function myBonusClick(self)
-	addon:SendComm("WHISPER", "Rudahab", "BTNCLICK", self:GetText()) 
+	self.glow = self:CreateTexture(nil,"OVERLAY")
+	self.glow:SetTexture("Interface\\Buttons\\UI-Panel-Button-Glow")
+	self.glow:SetAlpha(1)
+	self.glow:SetBlendMode("ADD")	
+	self.glow:SetTexCoord(0,0.7,0,0.5)
+	self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", -5, 5)
+	self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 0, 0)
+	
+
+	addon:SendComm("WHISPER", UnitName("player"), "BTNCLICK", self:GetText()) 
 	print("bonus")
 end
 
 
 function myNoBonusClick(self)
-	addon:SendComm("WHISPER", "Rudahab", "BTNCLICK", self:GetText()) 
+	self.glow = self:CreateTexture(nil,"OVERLAY")
+	self.glow:SetTexture("Interface\\Buttons\\UI-Panel-Button-Glow")
+	self.glow:SetAlpha(1)
+	self.glow:SetBlendMode("ADD")	
+	self.glow:SetTexCoord(0,0.7,0,0.5)
+	self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", -5, 5)
+	self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 0, 0)
+	
+
+	addon:SendComm("WHISPER", UnitName("player"), "BTNCLICK", self:GetText()) 
 	print("nobonus")
 end
 
