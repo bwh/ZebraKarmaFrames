@@ -19,14 +19,6 @@ function addon:OnInitialize()
 end
 
 
-function addon:TimerFeedback()
-  ZebraKarmaFrames:Callme(1,6948)
-  self.timerCount = self.timerCount + 1
-
-  if self.timerCount == 50 then
-    self:CancelAllTimers()
-  end
-end
 
 
 function addon:Callme(parx,pary)
@@ -81,8 +73,7 @@ function addon:CreateLootFrame(fIndex,itemID)
 		topOffset = 120
 	end
 	zkf:SetPoint("LEFT", UIParent, "LEFT", leftOffset, topOffset )
---	zkf:SetPoint("TOP",  )	
-	zkf:SetFrameStrata("BACKGROUND")
+	zkf:SetFrameStrata("HIGH")
 	zkf:Show()
 end
 
@@ -124,34 +115,54 @@ end
 
 
 
-function btnClick(self)
---debug
---print (button.text:GetText())
-addon:SendComm("WHISPER",  UnitName("player"), "BTNCLICK", self.text:GetText()) 
-end
-
 function addon:OnBTNCLICK(sender,msg)
 	print(sender..msg)
 end 
 
 
 function addon:OnBROADCAST(sender,msg,...)
+	if msg == 1 then
+		addon:HideAllFrames()
+	end
 	itemID = select(1,...)
 	local zkf = getglobal("ZebraKarmaFramesLootFrame"..msg)
 	if not zkf then
 		ZebraKarmaFrames:Callme(msg, itemID)
-	elseif not(tostring(itemID) == zkf.Icon:GetText()) then
-		if not (zkf.ButtonValue == "Pass") then
-			ZebraKarmaFrames:Callme(msg, itemID)
+	elseif (tostring(itemID) == zkf.Icon:GetText()) then
+		if not (zkf.buttonValue == "Pass") then
+			zkf:Show()
 		end
+	else
+		ZebraKarmaFrames:Callme(msg, itemID)
 	end
 end 
 
 function addon:OnITEMROLLSTART(sender,msg)
 	local zkf = getglobal("ZebraKarmaFramesLootFrame"..msg)
-	zkf.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
-	zkf.Roll:Show()
+	
+	if zkf.buttonValue == "" then
+		addon:CreateGlow(zkf,3)
+		zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf)		
+		zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf)
+	elseif zkf.Roll:IsEnabled() == 1 then
+		zkf.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+		zkf.Roll:Show()
+		addon:CreateGlow(zkf.Roll,2)		
+		zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf.Roll)
+		zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf.Roll)
+	end
+
+
 	getglobal("ZebraKarmaFramesLootFrame"..msg.."NoticeText"):SetText("Current Karma:\n".."300".."\nYou will lose:\n".."150")
+end
+
+function addon:Flasher(frame)
+	frame.glow:SetAlpha(1 - frame.glow:GetAlpha())
+end
+
+function addon:FlashEnds(frame)
+	addon:CancelTimer(frame.timer)
+	frame.glow:Hide()
 end
 
 function addon:OnWINNERANNOUNCE(sender,msg)
@@ -160,11 +171,18 @@ function addon:OnWINNERANNOUNCE(sender,msg)
 		zkf:Hide()
 		zkf.buttonValue = ""
 	end
-	
+end
+
+function addon:HideAllFrames()
+	for i=1, 10 do
+		local zkf = getglobal("ZebraKarmaFramesLootFrame"..i)
+		if zkf then
+			zkf:Hide()
+		end
+	end
 end
 
 function addon:CanUse(itemlink)
-
 	GameTooltip:Show()
 	GameTooltip:SetHyperlink(itemlink)
 	local l = { "TextLeft", "TextRight" }
@@ -192,7 +210,7 @@ function addon:CanUse(itemlink)
 end
 
 function myIconClick()
-	print("iconclick")
+--	print("iconclick")
 end
 
 
@@ -203,40 +221,61 @@ end
 
 
 function myOffSpecClick(self)
-	addon:CreateGlow(self)
+	addon:CreateGlow(self, 1)
 	addon:SendComm("WHISPER", UnitName("player"), "BTNCLICK", self:GetText()) 
 	self:Disable()
 	self:GetParent().buttonValue = "OffSpec"
 	addon:UpdateButtonState(self)	
+	addon:CancelTimer(self:GetParent().timer,true)
+	addon:CancelTimer(self:GetParent().timerends,true)
+	if self:GetParent().glow then
+		self:GetParent().glow:Hide()
+	end
 end
 
 
 function myBonusClick(self)
-	addon:CreateGlow(self)
+	addon:CreateGlow(self, 1)
 	addon:SendComm("WHISPER", UnitName("player"), "BTNCLICK", self:GetText()) 
 	self:Disable()
 	self:GetParent().buttonValue = "Bonus"
-
-	addon:UpdateButtonState(self)end
+	addon:UpdateButtonState(self)
+	addon:CancelTimer(self:GetParent().timer,true)
+	addon:CancelTimer(self:GetParent().timerends,true)
+	if self:GetParent().glow then
+		self:GetParent().glow:Hide()
+	end
+end
 
 
 function myNoBonusClick(self)
-	addon:CreateGlow(self)
+	addon:CreateGlow(self, 1)
 	addon:SendComm("WHISPER", UnitName("player"), "BTNCLICK", self:GetText()) 
 	self:Disable()
 	self:GetParent().buttonValue = "NoBonus"
 	addon:UpdateButtonState(self)
+	addon:CancelTimer(self:GetParent().timer,true)
+	addon:CancelTimer(self:GetParent().timerends,true)
+	if self:GetParent().glow then
+		self:GetParent().glow:Hide()
+	end
 end
 
-function addon:CreateGlow(self)
+function addon:CreateGlow(self, x)
 	self.glow = self:CreateTexture(nil,"OVERLAY")
 	self.glow:SetTexture("Interface\\Buttons\\UI-Panel-Button-Glow")
 	self.glow:SetAlpha(1)
 	self.glow:SetBlendMode("ADD")	
-	self.glow:SetTexCoord(0,0.7,0,0.5)
-	self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", -5, 5)
-	self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 0, 0)
-
+	if x == 1 then
+		self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", -7, 2)	
+		self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", -10, -9)
+	elseif x == 2 then
+		self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", -5, 13)	
+		self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 20, -52)
+	elseif x == 3 then
+		self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", 0, -155)	
+		self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 30, -80)
+	end
 end
 
 function addon:UpdateButtonState(self)
@@ -266,4 +305,9 @@ function addon:ZKFRoll(self)
 	self:SetNormalTexture("")
 	self:SetDisabledTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
 	self:Disable()
+	addon:CancelTimer(self:GetParent().timer, true)
+	addon:CancelTimer(self:GetParent().timerends,true)
+	if self.glow then 
+		self.glow:Hide()
+	end
 end
