@@ -1,3 +1,4 @@
+--/run ZebraKarmaFrames:SendComm("RAID", nil, "ITEMROLLSTART", 2) 
 local ADDONNAME = "ZebraKarmaFrames"
 ZebraKarmaFrames = LibStub("AceAddon-3.0"):NewAddon(ADDONNAME, "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0","AceComm-3.0", "AceTimer-3.0")
 local S = LibStub("AceSerializer-3.0")
@@ -36,17 +37,20 @@ function addon:CreateLootFrame(fIndex,itemID)
 	zkf.Icon = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Icon")
 	zkf.IconText = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."IconText")
 	zkf.LabelText = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."LabelText")
+	zkf.NoticeText = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."NoticeText")
 	zkf.Roll = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Roll")
 	zkf.btnBonus = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."btnBonus")
 	zkf.btnNoBonus = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."btnNoBonus")
 	zkf.btnOffSpec = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."btnOffSpec")
 	zkf.btnPass = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."btnPass")		
 	zkf.buttonValue = ""
+	zkf.rolling = false
 		
 	zkf.Icon:SetNormalTexture(itemTexture)
 	zkf.Icon:SetText(itemID)
 	zkf.IconText:Hide()
 	zkf.LabelText:SetText(itemName)
+	zkf.NoticeText:SetText("")
 	zkf.Roll:Enable()
 	zkf.Roll:Hide()
 	zkf.Roll:SetDisabledTexture("")
@@ -139,7 +143,7 @@ end
 
 function addon:OnITEMROLLSTART(sender,msg)
 	local zkf = getglobal("ZebraKarmaFramesLootFrame"..msg)
-	
+	zkf.rolling = true	
 	if zkf.buttonValue == "" then
 		addon:CreateGlow(zkf,3)
 		zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf)		
@@ -231,6 +235,13 @@ function myOffSpecClick(self)
 	if self:GetParent().glow then
 		self:GetParent().glow:Hide()
 	end
+	if self:GetParent().rolling then
+		self:GetParent().Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+		self:GetParent().Roll:Show()
+		addon:CreateGlow(self:GetParent().Roll,2)		
+		self:GetParent().timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, self:GetParent().Roll)
+		self:GetParent().timerends = addon:ScheduleTimer("FlashEnds",10, self:GetParent().Roll)
+	end
 end
 
 
@@ -245,6 +256,13 @@ function myBonusClick(self)
 	if self:GetParent().glow then
 		self:GetParent().glow:Hide()
 	end
+	if self:GetParent().rolling then
+		self:GetParent().Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+		self:GetParent().Roll:Show()
+		addon:CreateGlow(self:GetParent().Roll,2)		
+		self:GetParent().timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, self:GetParent().Roll)
+		self:GetParent().timerends = addon:ScheduleTimer("FlashEnds",10, self:GetParent().Roll)
+	end
 end
 
 
@@ -258,6 +276,13 @@ function myNoBonusClick(self)
 	addon:CancelTimer(self:GetParent().timerends,true)
 	if self:GetParent().glow then
 		self:GetParent().glow:Hide()
+	end
+	if self:GetParent().rolling then
+		self:GetParent().Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+		self:GetParent().Roll:Show()
+		addon:CreateGlow(self:GetParent().Roll,2)		
+		self:GetParent().timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, self:GetParent().Roll)
+		self:GetParent().timerends = addon:ScheduleTimer("FlashEnds",10, self:GetParent().Roll)
 	end
 end
 
