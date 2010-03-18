@@ -267,10 +267,10 @@ function addon:CreateGlow(self, x)
 		self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 7, -9)
 	elseif x == 2 then
 		self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", -5, 13)
-		self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 20, -52)
+		self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 5, -52)
 	elseif x == 3 then
 		self.glow:SetPoint("TOPLEFT", self ,"TOPLEFT", 0, -155)
-		self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 30, -80)
+		self.glow:SetPoint("BOTTOMRIGHT", self ,"BOTTOMRIGHT", 0, -80)
 	end
 end
 
