@@ -14,24 +14,23 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 function addon:OnInitialize()
 	self:RegisterComm(self.CommPrefix)
-
-
-
+	self.maxFrameIdx = 0
 end
 
 
 
 
-function addon:Callme(parx,pary)
-	addon:CreateLootFrame(parx,pary)
+function addon:Callme(index, itemID)
+	addon:CreateLootFrame(index, itemID)
 end
 
-function addon:CreateLootFrame(fIndex,itemID)
+function addon:CreateLootFrame(fIndex, itemID)
 	itemName, itemLink, _, _, _, _, _, _,_, itemTexture = GetItemInfo(itemID)
 
 	local zkf = getglobal("ZebraKarmaFramesLootFrame"..fIndex)
 	if not zkf then
 		zkf = CreateFrame("Frame","ZebraKarmaFramesLootFrame"..fIndex, UIParent , "ZKFFormTemplate")
+		self.maxFrameIdx = math.max(self.maxFrameIdx, fIndex)
 	end
 
 	zkf.dontShow = nil
@@ -116,43 +115,46 @@ function addon:OnBTNCLICK(sender,msg)
 end
 
 
-function addon:OnBROADCAST(sender,msg,...)
+function addon:OnBROADCAST(sender, index, itemID)
 	-- Record the sender name, so that we can whisper back to him...
 	self.KarmaMaster = sender
 
-	if msg == 1 then
+	if index == 1 then
 		addon:HideAllFrames()
 	end
-	itemID = select(1,...)
-	local zkf = getglobal("ZebraKarmaFramesLootFrame"..msg)
+
+	local zkf = getglobal("ZebraKarmaFramesLootFrame"..index)
 	if not zkf then
-		ZebraKarmaFrames:Callme(msg, itemID)
+		ZebraKarmaFrames:CreateLootFrame(index, itemID)
 	elseif (tostring(itemID) == zkf.Icon:GetText()) then
 		if not zkf.dontShow then
 			zkf:Show()
 		end
 	else
-		ZebraKarmaFrames:Callme(msg, itemID)
+		ZebraKarmaFrames:CreateLootFrame(index, itemID)
 	end
 end
 
-function addon:OnITEMROLLSTART(sender,msg)
-	local zkf = getglobal("ZebraKarmaFramesLootFrame"..msg)
+function addon:OnITEMROLLSTART(sender, index)
+	local zkf = getglobal("ZebraKarmaFramesLootFrame"..index)
 	zkf.rolling = true
 	if not zkf.currentButton then
 		addon:CreateGlow(zkf,3)
 		zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf)
 		zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf)
-	elseif zkf.Roll:IsEnabled() == 1 then
-		zkf.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
-		zkf.Roll:Show()
-		addon:CreateGlow(zkf.Roll,2)
-		zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf.Roll)
-		zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf.Roll)
+	else
+		self:SendComm("WHISPER", self.KarmaMaster, "BTNCLICK", zkf.currentButton.whisperText)
+		if zkf.Roll:IsEnabled() == 1 then
+			zkf.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+			zkf.Roll:Show()
+			addon:CreateGlow(zkf.Roll,2)
+			zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf.Roll)
+			zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf.Roll)
+		end
 	end
 
 	-- TODO: Parse the returned whisper to print correct info.
-	getglobal("ZebraKarmaFramesLootFrame"..msg.."NoticeText"):SetText("Current Karma:\n".."300".."\nYou will lose:\n".."150")
+	getglobal("ZebraKarmaFramesLootFrame"..index.."NoticeText"):SetText("Current Karma:\n".."300".."\nYou will lose:\n".."150")
 end
 
 function addon:Flasher(frame)
@@ -173,7 +175,7 @@ function addon:OnWINNERANNOUNCE(sender,msg)
 end
 
 function addon:HideAllFrames()
-	for i=1, 10 do
+	for i=1, self.maxFrameIdx do
 		local zkf = getglobal("ZebraKarmaFramesLootFrame"..i)
 		if zkf then
 			zkf:Hide()
@@ -226,33 +228,38 @@ function DeclareButtonClick(self)
 	-- If we are going to whisper, make the selection glow until needed.
 	-- If not, hide the frame, and make sure it doesn't come back
 	if self.whisperText then
-		-- TODO: Only if not selected yet.
-		addon:SendComm("WHISPER", UnitName("player"), "BTNCLICK", self.whisperText)
-		parent.currentButton = self
+		if parent.rolling then
+			addon:SendComm("WHISPER", addon.KarmaMaster, "BTNCLICK", self.whisperText)
+		end
 	else
 		parent:Hide()
 		parent.dontShow = true
 	end
 
-	-- Disable this button, and add a glow to it
-	self:Disable()
-	addon:CreateGlow(self, 1)
+	parent.currentButton = self
 
-	-- If there is a previous timer or glow, get rid of it ...
-	addon:CancelTimer(parent.timer, true)
-	addon:CancelTimer(parent.timerends, true)
+	-- Don't add glow to the button if we are going to hide the frame.
+	if not parent.dontShow then
+		-- Disable this button, and add a glow to it
+		self:Disable()
+		addon:CreateGlow(self, 1)
 
-	if parent.glow then
-		parent.glow:Hide()
-	end
+		-- If there is a previous timer or glow, get rid of it ...
+		addon:CancelTimer(parent.timer, true)
+		addon:CancelTimer(parent.timerends, true)
 
-	-- If we are supposed to roll now, add a glow
-	if parent.rolling then
-		parent.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
-		parent.Roll:Show()
-		addon:CreateGlow(parent.Roll, 2)
-		parent.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, parent.Roll)
-		parent.timerends = addon:ScheduleTimer("FlashEnds",10, parent.Roll)
+		if parent.glow then
+			parent.glow:Hide()
+		end
+
+		-- If we are supposed to roll now, add a glow
+		if parent.rolling then
+			parent.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+			parent.Roll:Show()
+			addon:CreateGlow(parent.Roll, 2)
+			parent.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, parent.Roll)
+			parent.timerends = addon:ScheduleTimer("FlashEnds",10, parent.Roll)
+		end
 	end
 end
 
