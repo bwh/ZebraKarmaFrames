@@ -1,4 +1,31 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="utf-8"?>
+
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-insance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Button name="ZKFDeclareBtnTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="80" y="25" />
+    </Size>
+    <Scripts>
+      <OnClick>DeclareButtonClick(this)</OnClick>
+    </Scripts>
+    <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+      <TexCoords left="0" right="0.625" top="0" bottom="1"/>
+    </NormalTexture>
+    <NormalFont style="GameFontNormalSmall" />
+    <HighlightFont style="GameFontHighlight" />
+    <DisabledFont style="GameFontNormalSmall" />
+    <ButtonText name="$parentText" justifyH="LEFT">
+      <Anchors>
+        <Anchor point="TOP">
+          <Offset x="0" y="-3" />
+        </Anchor>
+      </Anchors>
+      <FontHeight>
+        <AbsValue val="10" />
+      </FontHeight>
+    </ButtonText>
+  </Button>
+
   <!-- Main Loot window template		-->
   <Frame name="ZKFFormTemplate" movable="true" enableMouse="true" virtual="true">
     <Size>
@@ -36,7 +63,7 @@
         <Scripts>
           <OnEnter>myIconEnter(this)</OnEnter>
           <OnLeave>myIconLeave(this)</OnLeave>
---          <OnClick>myIconClick(this)</OnClick>
+          <!-- <OnClick>myIconClick(this)</OnClick> -->
         </Scripts>
         <ButtonText name="$parentText">
           <FontHeight>
@@ -72,22 +99,7 @@
         <DisabledFont style="GameFontDisable" />
       </Button>
       <!-- 	Bonus button	-->
-      <Button name="$parentbtnBonus">
-        <Size>
-          <AbsDimension x="125" y="25" />
-        </Size>
-        <ButtonText name="$parentText" text="Bonus">
-          <FontHeight>
-            <AbsValue val="10" />
-          </FontHeight>
-          <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-              <Offset>
-                <AbsDimension x="22" y="-3" />
-              </Offset>
-            </Anchor>
-           </Anchors>
-        </ButtonText>
+      <Button name="$parentbtnBonus" inherits="ZKFDeclareBtnTemplate" text="Bonus">
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
@@ -95,108 +107,43 @@
             </Offset>
           </Anchor>
         </Anchors>
-        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up"/>
-        <NormalFont style="GameFontNormalSmall" />
-        <HighlightFont style="GameFontHighlight" />
-        <DisabledFont style="GameFontNormalSmall" />
         <Scripts>
-        	<OnClick>myBonusClick(this)</OnClick>
+          <OnLoad>
+            this.whisperText = "bonus"
+          </OnLoad>
         </Scripts>
       </Button>
       <!-- 	No bonus button	-->
-      <Button name="$parentbtnNoBonus">
-        <Size>
-          <AbsDimension x="125" y="25" />
-        </Size>
-        <ButtonText name="$parentText" text="No Bonus">
-          <FontHeight>
-            <AbsValue val="10" />
-          </FontHeight>
-          <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-              <Offset>
-                <AbsDimension x="14" y="-3" />
-              </Offset>
-            </Anchor>
-           </Anchors>
-        </ButtonText>
+      <Button name="$parentbtnNoBonus" inherits="ZKFDeclareBtnTemplate" text="No Bonus">
         <Anchors>
           <Anchor point="TOPLEFT">
-            <Offset>
-              <AbsDimension x="10" y="-220" />
-            </Offset>
+            <Offset x="10" y="-220" />
           </Anchor>
         </Anchors>
-        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up"/>
-        <NormalFont style="GameFontNormalSmall" />
-        <HighlightFont style="GameFontHighlight" />
-        <DisabledFont style="GameFontNormalSmall" />
         <Scripts>
-        	<OnClick>myNoBonusClick(this)</OnClick>
+          <OnLoad> this.whisperText = "nobonus" </OnLoad>
         </Scripts>
       </Button>
       <!-- 	Offspec button	-->
-      <Button name="$parentbtnOffSpec">
-        <Size>
-          <AbsDimension x="125" y="25" />
-        </Size>
-        <ButtonText name="$parentText" text="Off Spec">
-          <FontHeight>
-            <AbsValue val="10" />
-          </FontHeight>
-          <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-              <Offset>
-                <AbsDimension x="15" y="-3" />
-              </Offset>
-            </Anchor>
-           </Anchors>
-        </ButtonText>
+      <Button name="$parentbtnOffSpec" inherits="ZKFDeclareBtnTemplate" text="Off Spec">
         <Anchors>
           <Anchor point="TOPLEFT">
-            <Offset>
-              <AbsDimension x="10" y="-240" />
-            </Offset>
+            <Offset x="10" y="-240" />
           </Anchor>
         </Anchors>
-        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up"/>
-        <NormalFont style="GameFontNormalSmall" />
-        <HighlightFont style="GameFontHighlight" />
-        <DisabledFont style="GameFontNormalSmall" />
         <Scripts>
-        	<OnClick>myOffSpecClick(this)</OnClick>
+          <OnLoad> this.whisperText = "offspec" </OnLoad>
         </Scripts>
       </Button>
       <!-- 	Pass/close button-->
-      <Button name="$parentbtnPass">
-        <Size>
-          <AbsDimension x="125" y="25" />
-        </Size>
-        <ButtonText name="$parentText" text="Pass">
-          <FontHeight>
-            <AbsValue val="10" />
-          </FontHeight>
-          <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-              <Offset>
-                <AbsDimension x="27" y="-3" />
-              </Offset>
-            </Anchor>
-           </Anchors>
-        </ButtonText>
+      <Button name="$parentbtnPass" inherits="ZKFDeclareBtnTemplate" text="Pass">
         <Anchors>
           <Anchor point="TOPLEFT">
-            <Offset>
-              <AbsDimension x="10" y="-260" />
-            </Offset>
+            <Offset x="10" y="-260" />
           </Anchor>
         </Anchors>
-        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up"/>
-        <NormalFont style="GameFontNormalSmall" />
-        <HighlightFont style="GameFontHighlight" />
-        <DisabledFont style="GameFontDisable" />
         <Scripts>
-        	<OnClick>myPassClick(this)</OnClick>
+          <OnLoad> this.whisperText = nil </OnLoad>
         </Scripts>
       </Button>
       <!-- 	Item's name-->
