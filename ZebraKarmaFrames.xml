@@ -6,7 +6,7 @@
       <AbsDimension x="80" y="25" />
     </Size>
     <Scripts>
-      <OnClick>DeclareButtonClick(this)</OnClick>
+      <OnClick>DeclareButtonClick(self)</OnClick>
     </Scripts>
     <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
       <TexCoords left="0" right="0.625" top="0" bottom="1"/>
@@ -61,9 +61,13 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnEnter>myIconEnter(this)</OnEnter>
-          <OnLeave>myIconLeave(this)</OnLeave>
-          <!-- <OnClick>myIconClick(this)</OnClick> -->
+          <OnLoad>
+            self:GetParent().Icon = self
+            self:GetParent().IconText = getglobal(self:GetName().."Text")
+          </OnLoad>
+          <OnEnter>myIconEnter(self)</OnEnter>
+          <OnLeave>myIconLeave(self)</OnLeave>
+          <!-- <OnClick>myIconClick(self)</OnClick> -->
         </Scripts>
         <ButtonText name="$parentText">
           <FontHeight>
@@ -87,7 +91,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>ZebraKarmaFrames:ZKFRoll(this)</OnClick>
+          <OnLoad>self:GetParent().Roll = self</OnLoad>
+          <OnClick>ZebraKarmaFrames:ZKFRoll(self)</OnClick>
         </Scripts>
         <ButtonText name="$parentText">
           <FontHeight>
@@ -109,7 +114,8 @@
         </Anchors>
         <Scripts>
           <OnLoad>
-            this.whisperText = "bonus"
+            self:GetParent().btnBonus = self
+            self.whisperText = "bonus"
           </OnLoad>
         </Scripts>
       </Button>
@@ -121,7 +127,10 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnLoad> this.whisperText = "nobonus" </OnLoad>
+          <OnLoad>
+            self:GetParent().btnNoBonus = self
+            self.whisperText = "nobonus"
+          </OnLoad>
         </Scripts>
       </Button>
       <!-- 	Offspec button	-->
@@ -132,7 +141,10 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnLoad> this.whisperText = "offspec" </OnLoad>
+          <OnLoad>
+            self:GetParent().btnOffSpec = self
+            self.whisperText = "offspec"
+          </OnLoad>
         </Scripts>
       </Button>
       <!-- 	Pass/close button-->
@@ -143,7 +155,10 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnLoad> this.whisperText = nil </OnLoad>
+          <OnLoad>
+            self:GetParent().btnPass = self
+            self.whisperText = nil
+          </OnLoad>
         </Scripts>
       </Button>
       <!-- 	Item's name-->
@@ -178,6 +193,11 @@
             </FontString>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnLoad>
+            self:GetParent().LabelText = getglobal(self:GetName().."Text")
+          </OnLoad>
+        </Scripts>
       </Frame>
       <!-- 	Karma amount text -->
       <Frame name="$parentNotice">
@@ -211,6 +231,11 @@
             </FontString>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnLoad>
+            self:GetParent().NoticeText = getglobal(self:GetName().."Text")
+          </OnLoad>
+        </Scripts>
       </Frame>
     </Frames>
   </Frame>

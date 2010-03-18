@@ -34,15 +34,6 @@ function addon:CreateLootFrame(fIndex,itemID)
 		zkf = CreateFrame("Frame","ZebraKarmaFramesLootFrame"..fIndex, UIParent , "ZKFFormTemplate")
 	end
 
-	zkf.Icon = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Icon")
-	zkf.IconText = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."IconText")
-	zkf.LabelText = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."LabelText")
-	zkf.NoticeText = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."NoticeText")
-	zkf.Roll = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."Roll")
-	zkf.btnBonus = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."btnBonus")
-	zkf.btnNoBonus = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."btnNoBonus")
-	zkf.btnOffSpec = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."btnOffSpec")
-	zkf.btnPass = getglobal("ZebraKarmaFramesLootFrame"..fIndex.."btnPass")
 	zkf.dontShow = nil
 	zkf.currentButton = nil
 	zkf.rolling = false
