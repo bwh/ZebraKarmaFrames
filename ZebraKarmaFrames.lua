@@ -300,15 +300,14 @@ function addon:ZKFRoll(frame)
 	end
 end
 
-function addon:ParseWhipers(msg, sender)
+function addon:ParseWhipers(event, msg, sender)
 	-- If sender is the karma master, there is an active frame which is rolling,
 	-- and the whisper is from the KarmaBot, then look at the contents
 	if ( sender == self.KarmaMaster and
 		 self.activeFrame and self.activeFrame.rolling and
 		 msg:find("^KarmaBot:") )
 	then
-		local bonusing, _, amount = msg:find("Your karma of (%d+) will be added to your roll")
-
+		local bonusing, _, amount = msg:find("Your Karma of (%d+) will be added to your roll")
 		if bonusing then
 			local will_lose = 5*math.ceil(tonumber(amount)/10)
 			self.activeFrame.NoticeText:SetText(L["Current Karma"] .. ":\n".. amount .. "\n" .. L["You will lose"] .. ":\n" .. will_lose)
