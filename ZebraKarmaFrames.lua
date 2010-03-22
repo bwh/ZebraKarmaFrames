@@ -75,6 +75,7 @@ function addon:CreateLootFrame(fIndex, itemID)
 	end
 	zkf:SetPoint("LEFT", UIParent, "LEFT", leftOffset, topOffset )
 	zkf:SetFrameStrata("HIGH")
+	self:EnableButtons(zkf)
 	zkf:Show()
 end
 
@@ -287,15 +288,15 @@ function addon:CreateGlow(self, x)
 	end
 end
 
-function addon:ZKFRoll(self)
+function addon:ZKFRoll(frame)
 	RandomRoll(1,100)
-	self:SetNormalTexture("")
-	self:SetDisabledTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
-	self:Disable()
-	addon:CancelTimer(self:GetParent().timer, true)
-	addon:CancelTimer(self:GetParent().timerends,true)
-	if self.glow then
-		self.glow:Hide()
+	frame:SetNormalTexture("")
+	frame:SetDisabledTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
+	self:DisableButtons(frame:GetParent())
+	self:CancelTimer(frame:GetParent().timer, true)
+	self:CancelTimer(frame:GetParent().timerends,true)
+	if frame.glow then
+		frame.glow:Hide()
 	end
 end
 
@@ -315,4 +316,20 @@ function addon:ParseWhipers(msg, sender)
 			self.activeFrame.NoticeText:SetText("")
 		end
 	end
+end
+
+function addon:DisableButtons(frame)
+	frame.btnBonus:Disable()
+	frame.btnNoBonus:Disable()
+	frame.btnOffSpec:Disable()
+	frame.btnPass:Disable()
+	frame.Roll:Disable()
+end
+
+function addon:EnableButtons(frame)
+	frame.btnBonus:Enable()
+	frame.btnNoBonus:Enable()
+	frame.btnOffSpec:Enable()
+	frame.btnPass:Enable()
+	frame.Roll:Enable()
 end
