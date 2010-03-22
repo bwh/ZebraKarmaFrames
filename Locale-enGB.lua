@@ -89,6 +89,9 @@ L["import_log_notlootitem"] = "|cffff0000Is not a loot item|r"
 L["import_log_itemdoesnotexist"] = "|cffff0000Item does not exist|r"
 L["import_log_succes"] = "|cff00ff00Imported succesfully|r"
 
+
+L["Current Karma"] = "Current Karma"
+L["You will lose"] = "You will lose"
 end
 
 

@@ -17,7 +17,13 @@ function addon:OnInitialize()
 	self.maxFrameIdx = 0
 end
 
+function addon:OnEnable()
+	self:RegisterEvent("CHAT_MSG_WHISPER", "ParseWhipers")
+end
 
+function addon:OnDisable()
+	self:UnregisterEvent("CHAT_MSG_WHISPER")
+end
 
 
 function addon:Callme(index, itemID)
@@ -137,6 +143,7 @@ end
 
 function addon:OnITEMROLLSTART(sender, index)
 	local zkf = getglobal("ZebraKarmaFramesLootFrame"..index)
+	self.activeFrame = zkf
 	zkf.rolling = true
 	if not zkf.currentButton then
 		addon:CreateGlow(zkf,3)
@@ -152,9 +159,6 @@ function addon:OnITEMROLLSTART(sender, index)
 			zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf.Roll)
 		end
 	end
-
-	-- TODO: Parse the returned whisper to print correct info.
-	getglobal("ZebraKarmaFramesLootFrame"..index.."NoticeText"):SetText("Current Karma:\n".."300".."\nYou will lose:\n".."150")
 end
 
 function addon:Flasher(frame)
@@ -172,6 +176,8 @@ function addon:OnWINNERANNOUNCE(sender,msg)
 		zkf:Hide()
 		zkf.dontShow = true
 	end
+	-- Not checking ZKF here. Clearly something is wrong if there is a mismatch.
+	self.activeFrame = nil
 end
 
 function addon:HideAllFrames()
@@ -290,5 +296,23 @@ function addon:ZKFRoll(self)
 	addon:CancelTimer(self:GetParent().timerends,true)
 	if self.glow then
 		self.glow:Hide()
+	end
+end
+
+function addon:ParseWhipers(msg, sender)
+	-- If sender is the karma master, there is an active frame which is rolling,
+	-- and the whisper is from the KarmaBot, then look at the contents
+	if ( sender == self.KarmaMaster and
+		 self.activeFrame and self.activeFrame.rolling and
+		 msg:find("^KarmaBot:") )
+	then
+		local bonusing, _, amount = msg:find("Your karma of (%d+) will be added to your roll")
+
+		if bonusing then
+			local will_lose = 5*math.ceil(tonumber(amount)/10)
+			self.activeFrame.NoticeText:SetText(L["Current Karma"] .. ":\n".. amount .. "\n" .. L["You will lose"] .. ":\n" .. will_lose)
+		elseif msg:find("Not using Karma") then
+			self.activeFrame.NoticeText:SetText("")
+		end
 	end
 end
