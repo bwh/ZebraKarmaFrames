@@ -144,20 +144,22 @@ end
 
 function addon:OnITEMROLLSTART(sender, index)
 	local zkf = getglobal("ZebraKarmaFramesLootFrame"..index)
-	self.activeFrame = zkf
-	zkf.rolling = true
-	if not zkf.currentButton then
-		addon:CreateGlow(zkf,3)
-		zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf)
-		zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf)
-	else
-		self:SendComm("WHISPER", self.KarmaMaster, "BTNCLICK", zkf.currentButton.whisperText)
-		if zkf.Roll:IsEnabled() == 1 then
-			zkf.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
-			zkf.Roll:Show()
-			addon:CreateGlow(zkf.Roll,2)
-			zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf.Roll)
-			zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf.Roll)
+	if zkf then
+		self.activeFrame = zkf
+		zkf.rolling = true
+		if not zkf.currentButton then
+			addon:CreateGlow(zkf,3)
+			zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf)
+			zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf)
+		else
+			self:SendComm("WHISPER", self.KarmaMaster, "BTNCLICK", zkf.currentButton.whisperText)
+			if zkf.Roll:IsEnabled() == 1 then
+				zkf.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+				zkf.Roll:Show()
+				addon:CreateGlow(zkf.Roll,2)
+				zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf.Roll)
+				zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf.Roll)
+			end
 		end
 	end
 end
