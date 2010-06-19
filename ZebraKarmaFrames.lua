@@ -103,7 +103,7 @@ end
 
 function myIconEnter(self)
 itemid = self:GetText()
-local itemName  = GetItemInfo(itemid)
+local itemName	= GetItemInfo(itemid)
 self:SetNormalTexture("Interface\\Icons\\"..GetItemIcon(itemid))
 GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
 GameTooltip:SetHyperlink("item:"..itemid..":0:0:0:0:0:0:0")
@@ -114,13 +114,6 @@ end
 function myIconLeave(self)
 GameTooltip:Hide()
 end
-
-
-
-function addon:OnBTNCLICK(sender,msg)
-	print(sender..msg)
-end
-
 
 function addon:OnBROADCAST(sender, index, itemID)
 	-- Record the sender name, so that we can whisper back to him...
@@ -152,13 +145,15 @@ function addon:OnITEMROLLSTART(sender, index)
 			zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf)
 			zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf)
 		else
-			self:SendComm("WHISPER", self.KarmaMaster, "BTNCLICK", zkf.currentButton.whisperText)
-			if zkf.Roll:IsEnabled() == 1 then
-				zkf.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
-				zkf.Roll:Show()
-				addon:CreateGlow(zkf.Roll,2)
-				zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf.Roll)
-				zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf.Roll)
+			if zkf.currentButton.whisperText then
+				self:SendComm("WHISPER", self.KarmaMaster, "BTNCLICK", zkf.currentButton.whisperText)
+				if zkf.Roll:IsEnabled() == 1 then
+					zkf.Roll:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Up")
+					zkf.Roll:Show()
+					addon:CreateGlow(zkf.Roll,2)
+					zkf.timer = addon:ScheduleRepeatingTimer("Flasher", 0.25, zkf.Roll)
+					zkf.timerends = addon:ScheduleTimer("FlashEnds",10, zkf.Roll)
+				end
 			end
 		end
 	end
@@ -177,7 +172,9 @@ function addon:OnWINNERANNOUNCE(sender,msg)
 	local zkf = getglobal("ZebraKarmaFramesLootFrame"..msg)
 	if zkf then
 		zkf:Hide()
-		zkf.dontShow = true
+		-- We hide it for now, but allow it to be shown on next broadcast
+		-- e.g. same item drops from consecutive bosses
+		zkf.dontShow = false
 	end
 	-- Not checking ZKF here. Clearly something is wrong if there is a mismatch.
 	self.activeFrame = nil
